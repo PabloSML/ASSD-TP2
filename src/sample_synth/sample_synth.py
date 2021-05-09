@@ -102,7 +102,7 @@ def fusionFrames(framesMatrix, hopSize):
 
 #   Test Main
 
-x, fs = sf.read('D:/PycharmProjects/ASSD-TP2/tests/promo_m.wav')
+x, fs = sf.read('/tests/promo_m.wav')
 # leftChannel = x[:, 0]
 # rightChannel = x[:, 1]
 
@@ -115,4 +115,4 @@ x, fs = sf.read('D:/PycharmProjects/ASSD-TP2/tests/promo_m.wav')
 
 y = timeScaler(x, 1024, 256, 1/2)   # Reduce el timepo a la mitad, sin cambiar tono
 # y = pitchShift(x, 1024, 256, -2)  # Disminuye un tono, sin cambiar la escala temporal
-sf.write('promo_fast.wav', y, fs)
+sf.write('../../tests/promo_fast.wav', y, fs)
