@@ -113,6 +113,6 @@ x, fs = sf.read('/tests/promo_m.wav')
 # y_right = pitchShift(rightChannel, 1024, 256, -2)
 # y = np.column_stack((y_left, y_right))
 
-y = timeScaler(x, 1024, 256, 1/2)   # Reduce el timepo a la mitad, sin cambiar tono
+y = timeScaler(x, 1024, 256, 1/2)   # Reduce el tiempo a la mitad, sin cambiar tono
 # y = pitchShift(x, 1024, 256, -2)  # Disminuye un tono, sin cambiar la escala temporal
 sf.write('../../tests/promo_fast.wav', y, fs)
