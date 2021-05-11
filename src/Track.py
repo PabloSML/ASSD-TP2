@@ -55,7 +55,7 @@ class Track:
                 tickDuration, velocity = self.find_note_off(ev.note, ev.channel, index)
                 realDuration = tickDuration * spt_tempo
 
-                noteAudio = self.instrument.play_note(frequency=noteFrequency, duration=realDuration)
+                noteAudio = self.instrument.play_note(frequency=noteFrequency, duration=realDuration, fs=self.fs)
 
                 if np.count_nonzero(noteAudio) != 0:    # si la nota efectivamente se genero
                     noteAudio *= max(velocity, ev.velocity) / np.abs(noteAudio).max() * octave  # normaliza la velocidad

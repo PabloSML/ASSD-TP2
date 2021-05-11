@@ -13,7 +13,7 @@ class SampleSynth(Instrument):
         super(SampleSynth, self).__init__()
         self.samples = None
 
-    def play_note(self, frequency, duration, **kwargs):
+    def play_note(self, frequency, duration, fs, **kwargs):
         return np.array([0.005, 0.005])
 
     def timeScaler(self, inputVector, winSize, hopSize, timeFactor):
