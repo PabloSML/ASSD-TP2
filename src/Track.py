@@ -19,8 +19,9 @@ class Track:
         self.noteNumDecoder = noteNumDecoder
         self.instrument = None
         self.instrumentName = None
-        self.funNoteFreqs = {'A': 27.5, 'A#': 29.0, 'B': 30.87, 'Bb': 29.135, 'C': 16.35, 'C#': 17.32, 'D': 18.35,
-                             'D#': 19.0, 'E': 20.6, 'Eb': 19.445, 'F': 21.83, 'F#': 23.12, 'G': 24.5, 'G#': 25.96}
+        self.funNoteFreqs = [16.35, 17.32, 18.35, 19.0, 20.6, 21.83, 23.12, 24.5, 25.96, 27.5, 29.0, 30.87]
+        # self.funNoteFreqs = {'A': 27.5, 'A#': 29.0, 'B': 30.87, 'C': 16.35, 'C#': 17.32, 'D': 18.35,
+        #                      'D#': 19.0, 'E': 20.6, 'F': 21.83, 'F#': 23.12, 'G': 24.5, 'G#': 25.96}
 
     def toggle_active(self):
         self.isActive = not self.isActive
@@ -48,10 +49,13 @@ class Track:
             tickTime += ev.time
 
             if not ev.is_meta and ev.type == 'note_on':
-                noteData = self.noteNumDecoder.loc[ev.note]
-                noteFunFreq = self.funNoteFreqs[noteData['Note']]
-                octave = noteData['Octave']
-                noteFrequency = noteFunFreq * 2**octave
+                # noteData = self.noteNumDecoder.loc[ev.note]
+                # noteFunFreq = self.funNoteFreqs[noteData['Note']]
+                # octave = noteData['Octave']
+                # noteFrequency = noteFunFreq * 2**octave
+                fundamentalIndex = ev.note % 12
+                noteFrequency = 440 * 2**((ev.note - 69)/12)    # Conversion numNota a frec
+                octave = int(np.round(np.log2(noteFrequency/self.funNoteFreqs[fundamentalIndex])))
                 tickDuration, velocity = self.find_note_off(ev.note, ev.channel, index)
                 realDuration = tickDuration * spt_tempo
 
