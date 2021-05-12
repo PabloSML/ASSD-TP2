@@ -2,9 +2,9 @@ from src.KarplusStrong.karplusStrong import karplus_strong
 from src.KarplusStrong.karplusStrong import karplus_strong_drum
 from src.Instrument import Instrument
 import numpy as np
-class GuitarString(Instrument):
+class ksGuitar(Instrument):
     def __init__(self):
-        super(GuitarString, self).__init__()
+        super(ksGuitar, self).__init__()
         pass
 
     def init_wavetable(self):
@@ -24,9 +24,9 @@ class GuitarString(Instrument):
         return self.sample
 
 
-class Drum(Instrument):
+class ksDrum(Instrument):
     def __init__(self):
-        super(Drum, self).__init__()
+        super(ksDrum, self).__init__()
         pass
 
     def init_wavetable(self):
