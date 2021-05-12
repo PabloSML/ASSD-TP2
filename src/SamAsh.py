@@ -1,9 +1,11 @@
-from src.SampleSynth.SampleSynth import SampleSynth
+from src.SampleSynth.SampleInstruments import SampleViolin, SampleGuitar
+from Instrument import GuitarString
 
 
 class SamAsh:
     def __init__(self):
-        self.availableInstruments = {'sampleSynth': SampleSynth}
+        self.availableInstruments = {'sampleViolin': SampleViolin, 'sampleGuitar': SampleGuitar,
+                                     'guitarString': GuitarString}
         self.usedInstruments = {}
 
     def loan_instrument(self, instrument_name):
