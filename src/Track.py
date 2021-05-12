@@ -2,12 +2,12 @@ import numpy as np
 from mido import MidiFile
 from src.SamAsh import SamAsh
 from src.Instrument import Instrument
-from src.SampleSynth import SampleSynth
+from src.SampleSynth import sample_synth
 
 
 class Track:
     def __init__(self, midiLength=None, midiTrack = None, trackNumber=None, spt_tempos=None,
-                 store: SamAsh=None, noteNumDecoder=None, fs=None):
+                 store: SamAsh=None, fs=None):
         self.midiLength = midiLength
         self.midiTrack = midiTrack
         self.trackNumber = trackNumber
@@ -16,7 +16,6 @@ class Track:
         self.audioTrack = None
         self.isActive = False
         self.store = store
-        self.noteNumDecoder = noteNumDecoder
         self.instrument = None
         self.instrumentName = None
         self.funNoteFreqs = [16.35, 17.32, 18.35, 19.0, 20.6, 21.83, 23.12, 24.5, 25.96, 27.5, 29.0, 30.87]
@@ -49,20 +48,21 @@ class Track:
             tickTime += ev.time
 
             if not ev.is_meta and ev.type == 'note_on':
-                # noteData = self.noteNumDecoder.loc[ev.note]
-                # noteFunFreq = self.funNoteFreqs[noteData['Note']]
-                # octave = noteData['Octave']
-                # noteFrequency = noteFunFreq * 2**octave
                 fundamentalIndex = ev.note % 12
-                noteFrequency = 440 * 2**((ev.note - 69)/12)    # Conversion numNota a frec
+                noteFrequency = np.round(440 * 2**((ev.note - 69)/12), 2)    # Conversion numNota a frec
                 octave = int(np.round(np.log2(noteFrequency/self.funNoteFreqs[fundamentalIndex])))
                 tickDuration, velocity = self.find_note_off(ev.note, ev.channel, index)
-                realDuration = tickDuration * spt_tempo
+                realDuration = tickDuration * spt_tempo * 1.5
 
-                noteAudio = self.instrument.play_note(frequency=noteFrequency, duration=realDuration, fs=self.fs)
+                if self.instrumentName.find('sample') != -1:
+                    noteAudio = self.instrument.play_note(noteFrequency=noteFrequency, duration=realDuration,
+                                                          fs=self.fs, noteNumber=ev.note)
+                else:
+                    noteAudio = self.instrument.play_note(noteFrequency=noteFrequency, duration=realDuration,
+                                                          fs=self.fs)
 
                 if np.count_nonzero(noteAudio) != 0:    # si la nota efectivamente se genero
-                    noteAudio *= max(velocity, ev.velocity) / np.abs(noteAudio).max() * octave  # normaliza la velocidad
+                    # noteAudio *= max(velocity, ev.velocity) / np.abs(noteAudio).max() * octave  # normaliza la velocidad
                     noteBeg = int(np.round(self.fs * realTime))
                     if noteBeg + noteAudio.size > self.audioTrack.size:
                         self.audioTrack = np.append(self.audioTrack, np.zeros(noteBeg + noteAudio.size - self.audioTrack.size))
@@ -73,7 +73,8 @@ class Track:
 
         for futureEv in self.midiTrack[currentIndex+1:]:
             tickDelta += futureEv.time
-            if (not futureEv.is_meta) and (futureEv.note == noteNumber) and (futureEv.channel == channel):
+            if (not futureEv.is_meta) and (futureEv.type.find('note') != -1) and (futureEv.note == noteNumber) \
+                    and (futureEv.channel == channel):
                 if futureEv.type == 'note_off':
                     return tickDelta, futureEv.velocity
                 elif futureEv.type == 'note_on':
