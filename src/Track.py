@@ -10,11 +10,12 @@ class Track:
                  store: SamAsh=None, fs=None):
         self.midiLength = midiLength
         self.midiTrack = midiTrack
+        self.usedNoteOff = []
         self.trackNumber = trackNumber
         self.fs = fs
         self.spt_tempos = spt_tempos
         self.audioTrack = None
-        self.isActive = False
+        self.isActive = True
         self.store = store
         self.instrument = None
         self.instrumentName = None
@@ -47,7 +48,7 @@ class Track:
             realTime += ev.time * spt_tempo
             tickTime += ev.time
 
-            if not ev.is_meta and ev.type == 'note_on':
+            if not ev.is_meta and ev.type == 'note_on' and not (index in self.usedNoteOff):
                 fundamentalIndex = ev.note % 12
                 noteFrequency = np.round(440 * 2**((ev.note - 69)/12), 2)    # Conversion numNota a frec
                 octave = int(np.round(np.log2(noteFrequency/self.funNoteFreqs[fundamentalIndex])))
@@ -71,14 +72,14 @@ class Track:
     def find_note_off(self, noteNumber, channel, currentIndex):
         tickDelta = 0
 
-        for futureEv in self.midiTrack[currentIndex+1:]:
+        for futureIndex, futureEv in enumerate(self.midiTrack[currentIndex+1:]):
             tickDelta += futureEv.time
             if (not futureEv.is_meta) and (futureEv.type.find('note') != -1) and (futureEv.note == noteNumber) \
                     and (futureEv.channel == channel):
                 if futureEv.type == 'note_off':
                     return tickDelta, futureEv.velocity
                 elif futureEv.type == 'note_on':
-                    futureEv.type = 'note_off'
+                    self.usedNoteOff.append(currentIndex+1 + futureIndex)
                     return tickDelta, futureEv.velocity
 
         return None, None

@@ -1,5 +1,5 @@
 import numpy as np
-from partial import partial
+from src.AdditiveSynth.partial import partial
 from random import gauss
 from math import ceil
 

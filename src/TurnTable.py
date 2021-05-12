@@ -12,7 +12,7 @@ class TurnTable:
         self.midi_file = midi_file
         self.trackList = []
         self.store = SamAsh()
-        self.fs = 48000
+        self.fs = 44100
         self.songLength = None
         self.song = None
 
@@ -34,8 +34,7 @@ class TurnTable:
             self.trackList.append(Track(midiLength=self.songLength, midiTrack=track, trackNumber=index+1,
                                         spt_tempos=spt_tempos, store=self.store, fs=self.fs))
             self.trackList[index].set_instrument('sampleViolin')
-        # self.trackList[0].set_instrument('sampleGuitar')
-        self.trackList[0].toggle_active()
+        # self.trackList[0].toggle_active()
         # self.trackList[1].toggle_active()
         # self.trackList[2].toggle_active()
 
@@ -58,9 +57,9 @@ class TurnTable:
         # if self.song.size < self.trackList[0].audioTrack.size:
         #     self.song = np.append(self.song, np.zeros(self.trackList[0].audioTrack.size - self.song.size))
         # self.song = self.trackList[0].audioTrack
-        sf.write('C:/Users/PabloSmolkin/PycharmProjects/ASSD-TP2/tests/test.wav', self.song, self.fs)
+        sf.write('D:/PycharmProjects/ASSD-TP2/tests/test.wav', self.song, self.fs)
 
 beogram4000C = TurnTable()
-beogram4000C.load('C:/Users/PabloSmolkin/PycharmProjects/ASSD-TP2/tests/StarWarsImperialMedley.mid')
+beogram4000C.load('D:/PycharmProjects/ASSD-TP2/tests/beethoven2.mid')
 beogram4000C.synthesize()
 beogram4000C.save_synthesis()
