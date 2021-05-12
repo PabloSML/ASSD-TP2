@@ -34,7 +34,7 @@ class TurnTable:
             self.trackList.append(Track(midiLength=self.songLength, midiTrack=track, trackNumber=index+1,
                                         spt_tempos=spt_tempos, store=self.store, fs=self.fs))
             self.trackList[index].set_instrument('sampleViolin')
-        self.trackList[0].set_instrument('sampleGuitar')
+        # self.trackList[0].set_instrument('sampleGuitar')
         self.trackList[0].toggle_active()
         # self.trackList[1].toggle_active()
         # self.trackList[2].toggle_active()

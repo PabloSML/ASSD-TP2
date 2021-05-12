@@ -1,6 +1,6 @@
 from src.SampleSynth.SampleInstruments import SampleViolin, SampleGuitar
 from src.KarplusStrong.ksInstruments import ksGuitar, ksDrum
-
+from src.AdditiveSynth import AdditiveSynthesizer
 
 class SamAsh:
     def __init__(self):

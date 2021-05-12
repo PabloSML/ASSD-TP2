@@ -1,3 +1,5 @@
+import numpy as np
+
 from src.Instrument import Instrument
 import src.SampleSynth.sample_synth as ssynth
 import soundfile as sf
@@ -32,7 +34,8 @@ class SampleViolin(Instrument):
         sample_len = note.size/sample_fs
         timeFactor = duration/sample_len
 
-        note = ssynth.timeScaler(note, 1024, 256, timeFactor)
+        if np.abs(1 - timeFactor)*100 > 95:
+            note = ssynth.timeScaler(note, 1024, 256, timeFactor)
 
         return note
 
@@ -50,13 +53,13 @@ class SampleGuitar(Instrument):
         sample, sample_fs = sf.read(self.samplesPath + '60.wav')
         note = ssynth.averageChannels(sample)
 
-        if semitonalDiff:
-            note = ssynth.pitchShift(note, 1024, 256, semitonalDiff)
-
         sample_len = note.size / sample_fs
         timeFactor = duration / sample_len
 
-        if timeFactor != 1:
+        if np.abs(1 - timeFactor)*100 > 10:
             note = ssynth.timeScaler(note, 1024, 256, timeFactor)
+
+        if semitonalDiff:
+            note = ssynth.pitchShift(note, 1024, 256, semitonalDiff)
 
         return note
