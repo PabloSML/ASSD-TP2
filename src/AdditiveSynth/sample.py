@@ -2,19 +2,34 @@ import numpy as np
 import soundfile as sf
 import matplotlib.pyplot as plt
 from AdditiveSynthesizer import AddSynth
-
+from scipy.fft import fft, fftfreq
+import matplotlib.ticker as ticker
 # ------------------------------------------------------------
 if __name__ == '__main__':
-    data, rate = sf.read('C:/Users/Philippe/PycharmProjects/ASSD-TP2/resources/Samples/flute-C4.wav')
-    t = np.linspace(0, data.shape[0] / rate, data.shape[0])  # start stop num
+
+    instrumento = 'violin'
+
+    original, rate = sf.read('../../resources/Samples/' + instrumento + '-C4.wav')
+    t = np.linspace(0, original.shape[0] / rate, original.shape[0])  # start stop num
+
     rocola = AddSynth()
-    flute_harmonics = [1, 2, 3, 4, 5, 6, 7, 8, 9] #261.626
-    flute_amplituds = [351.66, 510.63, 178.22, 67.94, 79.84, 27.96, 24.81, 29.51, 9.01]
-    piano_harmonics = [1, 2, 3, 4, 6, 7, 8, 9]
-    piano_amplituds = [356.88, 251.73, 31.64, 39.84, 38.67, 10.56, 15.06, 13.04]
-    rocola.create_partials(705.9, flute_harmonics, flute_amplituds, data.shape[0] / rate, rate / 2)
-    f_sound = rocola.apply_ADSR(2.438, 0.358, 0.358, 0.128, 3026, 2833, 2489, rate / 2) #dtA,dtD,dtS,dtR,kAo,Ao,So,fs
-    x, sound = rocola.plot_me()
-    plt.plot(x, f_sound)
-    plt.plot(t, data)
+    x, monster = rocola.create_note(261.626, original.shape[0]/rate, instrumento, rate)
+
+    of = fft(original)
+    xf1 = fftfreq(original.shape[0], 1 / rate)[:original.shape[0] // 2]
+    mf = fft(monster)
+    xf2 = fftfreq(monster.shape[0], 1 / rate)[:monster.shape[0] // 2]
+
+    fig, axs = plt.subplots(2, 2)
+    axs[0,0].plot(x, monster)
+    axs[0,1].plot(xf1, 2.0 / monster.shape[0] * np.abs(mf[0:monster.shape[0] // 2]))
+    axs[0,1].xaxis.set_major_locator(ticker.MultipleLocator(261))
+    axs[0,1].set_xlim(0, 261 * 10)
+
+    axs[1,0].plot(t, original)
+    axs[1,1].plot(xf2, 2.0 / original.shape[0] * np.abs(of[0:original.shape[0] // 2]))
+    axs[1,1].xaxis.set_major_locator(ticker.MultipleLocator(261))
+    axs[1,1].set_xlim(0, 261 * 10)
     plt.show()
+
+    sf.write('piano_exp.wav', monster, rate)
