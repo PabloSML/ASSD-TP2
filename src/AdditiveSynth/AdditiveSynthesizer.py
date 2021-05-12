@@ -1,10 +1,11 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import scipy.io as wav
+import soundfile as sf
 from partial import partial
 from random import gauss
 from math import ceil
 from scipy.fft import fft, fftfreq
+
 
 class AddSynth:
 
@@ -13,13 +14,13 @@ class AddSynth:
         self.x = None
 
     def create_note(self, freq, duration, instrumento, fs=5500):
+
         nota = 'C7' if freq > 650 else 'C4'
         data = self.instrument_data(instrumento + nota)
         self.create_partials(freq, data[1], data[2], duration, fs)
         t_ADSR = np.array(data[3]) * duration / 100.0
         sound = self.apply_ADSR(t_ADSR[0], t_ADSR[1], t_ADSR[2], t_ADSR[3], t_ADSR[4], t_ADSR[5], t_ADSR[6], t_ADSR[7], t_ADSR[8], fs)
-        return (
-         self.x, sound)
+        return self.x, sound
 
     def create_partials(self, freq, harmonics, amplituds, length, fs=4000):
         self.x = np.arange(0, length, 1 / fs)
@@ -47,30 +48,17 @@ class AddSynth:
         """
              Estructura del instrumento: wav, harmonicos, amplitudes, ADSR (dt [%], Amplitudes)
         """
-        repertorio = {'pianoC4':[
-          '../resources/Samples/piano-C4.wav', [1, 2, 3, 4, 6, 7, 8, 9],
-          [
-           356.88, 251.73, 31.64, 39.84, 38.67, 10.56, 15.06, 13.04],
-          [
-           0.068, 0.1293, 0.717, 2.698, 2493, 2544, 930]],
-         'fluteC4':[
-          '../resources/Samples/flute-C4.wav', [1, 2, 3, 4, 5, 6, 7, 8, 9],
-          [
-           351.66, 510.63, 178.22, 67.94, 79.84, 27.96, 24.81, 29.51, 9.01],
-          [
-           2.44, 0.36, 0.358, 0.128, 3026, 2833, 2489]],
-         'trumpetC4':[
-          '../resources/Samples/trumpet-C4.wav', [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
-          [
-           50.5, 70.7, 122.8, 162, 60.9, 133.6, 66.7, 40.8, 32.3, 28, 36.1],
-          [
-           5, 0.65, 5.24, 83.46, 1.93, 3.72, 1810, 3000, 1540]]}
+        repertorio = {
+            'pianoC4':['../resources/Samples/piano-C4.wav', [1, 2, 3, 4, 6, 7, 8, 9],[356.88, 251.73, 31.64, 39.84, 38.67, 10.56, 15.06, 13.04],[0.068, 0.1293, 0.717, 2.698, 2493, 2544, 930]],
+            'fluteC4':['../resources/Samples/flute-C4.wav', [1, 2, 3, 4, 5, 6, 7, 8, 9],[351.66, 510.63, 178.22, 67.94, 79.84, 27.96, 24.81, 29.51, 9.01],[2.44, 0.36, 0.358, 0.128, 3026, 2833, 2489]],
+            'trumpetC4':['../resources/Samples/trumpet-C4.wav', [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],[50.5, 70.7, 122.8, 162, 60.9, 133.6, 66.7, 40.8, 32.3, 28, 36.1],[5, 0.65, 5.24, 83.46, 1.93, 3.72, 1810, 3000, 1540]]}
+
         return repertorio[instrument]
 
     def plot_me(self):
         return (self.x, self.sound)
 
-
+#------------------------------------------------------------------
 if __name__ == '__main__':
 
     def compute_ADSR(signal, w_len=0.01, fs=4000):
@@ -90,7 +78,7 @@ if __name__ == '__main__':
              adsr, upper, lower)
 
 
-    rate, data = wav.read('../resources/Samples/piano-C4.wav')
+    data, rate = sf.read('../resources/Samples/piano-C4.wav')
     fs = rate / 5
     w = 2
     t = np.linspace(0, data.shape[0] / rate, data.shape[0])

@@ -1,11 +1,11 @@
 import numpy as np
-from scipy.io import wavfile as wav
+import soundfile as sf
 import matplotlib.pyplot as plt
 from AdditiveSynthesizer import AddSynth
 
 # ------------------------------------------------------------
 if __name__ == '__main__':
-    rate, data = wav.read('../resources/Samples/flute-C4.wav')
+    data, rate = sf.read('C:/Users/Philippe/PycharmProjects/ASSD-TP2/resources/Samples/flute-C4.wav')
     t = np.linspace(0, data.shape[0] / rate, data.shape[0])  # start stop num
     rocola = AddSynth()
     flute_harmonics = [1, 2, 3, 4, 5, 6, 7, 8, 9] #261.626
