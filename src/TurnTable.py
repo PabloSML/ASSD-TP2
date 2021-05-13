@@ -5,7 +5,7 @@ from src.Track import Track
 from src.SamAsh import SamAsh
 import soundfile as sf
 import pyaudio
-import simpleaudio as sa
+# import simpleaudio as sa
 
 
 class TurnTable:
@@ -83,7 +83,9 @@ class TurnTable:
         #     player.write(playbackData)
         #     chunkIndex += 1
 
-        player.write(self.trackList[0].audioTrack.tobytes())
+        sound = (self.trackList[0].audioTrack / np.abs(self.trackList[0].audioTrack.max())).astype(np.float32)
+        sound = sound.tobytes()
+        player.write(sound)
 
         player.stop_stream()
         player.close()
