@@ -2,42 +2,51 @@ import numpy as np
 from partial import partial
 from random import gauss
 from math import ceil
+from src.Instrument import Instrument
 
 
-
-class AddSynth:
+class AddSynth(Instrument):
 
     def __init__(self, parent=None):
         self.sound = None
         self.x = None
+        np.random.seed(2021)
+# * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+    def play_note(self, freq, duration, fs=5500, **kwargs):
 
-    def create_note(self, freq, duration, instrumento, fs=5500):
+        instrumento = kwargs['instrument']
+        env = kwargs['env']
 
         nota = ('C7' if freq > 650 else 'C4') if instrumento != 'guitar' else 'C4'
         data = self.instrument_data(instrumento + nota)
 
         self.create_partials(freq, data[0], data[1], duration, fs)
-        t_ADSR = np.array(data[2][:6]) * duration / 100.0
-        params_ADSR = np.concatenate([t_ADSR,data[2][6:]])
-
-        sound = self.ADSR(params_ADSR, fs)
+        if env == 'ADSR':
+            t_ADSR = np.array(data[2][:6]) * duration / 100.0
+            params_ADSR = np.concatenate([t_ADSR,data[2][6:]])
+            sound = self.ADSR(params_ADSR, fs)
+        else:
+            sound = self.apply_env(instrumento)
 
         return self.x, sound
 
+# * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
     def create_partials(self, freq, harmonics, amplituds, length, fs=4000):
 
         self.x = np.arange(0, length, 1 / fs)
         self.sound = np.zeros(self.x.size)
 
         for i in range(len(harmonics)):
-            self.sound += amplituds[i] * np.sin(self.x * 2*np.pi*gauss(freq * harmonics[i], 2))
+            self.sound += amplituds[i] * np.sin(self.x * 2*np.pi*gauss(freq * harmonics[i], 1))
 
+# * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
     def ADSR(self, t_ADSR, fs):
 
         s = self.apply_ADSR(t_ADSR[0], t_ADSR[1], t_ADSR[2], t_ADSR[3], t_ADSR[4], t_ADSR[5], t_ADSR[6], t_ADSR[7],
                             t_ADSR[8], fs)
         return s
 
+# * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
     def apply_ADSR(self, dti, dtA, dtD, dtS, dtR, dtf, kAo, Ao, So, fs):
 
         inicio = np.zeros(int(dti * fs))
@@ -58,6 +67,13 @@ class AddSynth:
         enveloped_sound = self.sound/max(abs(self.sound)) * ADSR
         return enveloped_sound
 
+# * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+    def apply_env(self,instrumento):
+        ENV = np.genfromtxt('Env/env_' + instrumento + '.txt')
+        enveloped_sound = self.sound / max(abs(self.sound)) * ENV
+        return enveloped_sound
+
+# * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
     def instrument_data(self, instrument):
         """
              Estructura del instrumento: wav, harmonicos, amplitudes, ADSR (dt [%], Amplitudes)
@@ -93,6 +109,7 @@ class AddSynth:
 
         return repertorio[instrument]
 
+# * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
     def plot_me(self):
         return (self.x, self.sound)
 
@@ -105,39 +122,52 @@ if __name__ == '__main__':
     from scipy.fft import fft, fftfreq
 
     def compute_ADSR(signal, w_len=0.01, fs=4000):
+
         win_len_half = round(w_len * fs * 0.5)
         N = signal.shape[0]
         adsr = np.zeros(N)
         upper = np.zeros(N)
         lower = np.zeros(N)
+
         for i in range(N):
             start = max(0, i - win_len_half)
             end = min(N, i + win_len_half)
             adsr[i] = np.amax(np.abs(signal)[start:end])
             upper[i] = np.amax(signal[start:end])
             lower[i] = np.amin(signal[start:end])
-        else:
-            return (
-             adsr, upper, lower)
+
+        return (adsr, upper, lower)
 
 
-    instrumento = 'flute'
+    instrumento = 'piano'
     f = 261
-    data, rate = sf.read('../../resources/Samples/' + instrumento + '-C6.wav')
+    data, rate = sf.read('../../resources/Samples/' + instrumento + '-C4.wav')
     if instrumento == 'guitar':
         data = data[:,0]
-    h = 5
-    # sos = signal.butter(10, [261.626*0.9*h,261.626*1.1*h], 'bandpass', fs=rate, output='sos')
-    # data = signal.sosfilt(sos, data)
+    h = 1
+    sos = signal.butter(10, [261.626*0.9*h,261.626*1.1*h], 'bandpass', fs=rate, output='sos')
+    data = signal.sosfilt(sos, data)
 
     fs = rate
-    w = 2
+    w = 0.01
     t = np.linspace(0, data.shape[0] / rate, data.shape[0])
-    #adsr, upper, lower = compute_ADSR(data, w, fs)
+    adsr, upper, lower = compute_ADSR(data, w, fs)
     yf = fft(data)
     xf = fftfreq(data.shape[0], 1 / rate)[:data.shape[0] // 2]
     #print(max(2.0 / data.shape[0] * np.abs(yf[0:data.shape[0] // 2])))
 
+    # test_file = open('Env/env_' + instrumento + '.txt', "w")
+    # np.savetxt(test_file, upper, fmt='%1.4e')
+    # test_file.close()
+    # plt.plot(t, data)
+    # plt.plot(t, upper)
+    # plt.show()
+
+    plt.title('Parcial ' + str(h))
+    plt.xlabel('tiempo [s]')
+    plt.plot(t, data)
+    plt.grid(True)
+    plt.show()
     # ----- PLOT ----- #
     fig, (ax1, ax2) = plt.subplots(2, 1)
     fig.subplots_adjust(hspace=0.3)
@@ -155,5 +185,4 @@ if __name__ == '__main__':
     ax2.xaxis.set_minor_locator(ticker.MultipleLocator(f/5))
     ax2.grid(True)
 
-    #plt.grid()
     plt.show()
