@@ -115,7 +115,7 @@ class SampleGuitar(Instrument):
     def play_note(self, noteFrequency, duration, fs, **kwargs):
         noteNumber = kwargs['noteNumber']
         note = None
-        duration *= 2
+        duration = max(2, duration*2)
 
         if duration < 3:
             prefix = 'Sam_'
