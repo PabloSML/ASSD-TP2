@@ -4,7 +4,7 @@ import numpy as np
 from src.Track import Track
 from src.SamAsh import SamAsh
 import soundfile as sf
-
+import pyaudio
 
 class TurnTable:
 
@@ -12,7 +12,7 @@ class TurnTable:
         self.midi_file = midi_file
         self.trackList = []
         self.store = SamAsh()
-        self.fs = 44100
+        self.fs = 48000
         self.songLength = None
         self.song = None
 
@@ -30,13 +30,15 @@ class TurnTable:
         spt_tempos = np.array([uspb_tempos[0], uspb_tempos[1]/(1e6 * self.midi_file.ticks_per_beat)])
         self.songLength = int(np.ceil(self.fs * self.midi_file.length))
 
+        tracksCreated = 0
         for index, track in enumerate(self.midi_file.tracks[1:]):
-            self.trackList.append(Track(midiLength=self.songLength, midiTrack=track, trackNumber=index+1,
-                                        spt_tempos=spt_tempos, store=self.store, fs=self.fs))
-            self.trackList[index].set_instrument('sampleViolin')
+            lastEv = track[-2]  # Sin contar End-Of-Track
+            if lastEv.type.find('note') != -1 or lastEv.type.find('control') != -1:  # Ver que la track sea de notas
+                self.trackList.append(Track(midiLength=self.songLength, midiTrack=track, trackNumber=index+1,
+                                            spt_tempos=spt_tempos, store=self.store, fs=self.fs))
+                self.trackList[tracksCreated].set_instrument('sampleGuitar')
+                tracksCreated += 1
         # self.trackList[0].toggle_active()
-        # self.trackList[1].toggle_active()
-        # self.trackList[2].toggle_active()
 
     def set_fs(self, new_fs):
         self.fs = new_fs
@@ -60,6 +62,6 @@ class TurnTable:
         sf.write('D:/PycharmProjects/ASSD-TP2/tests/test.wav', self.song, self.fs)
 
 beogram4000C = TurnTable()
-beogram4000C.load('D:/PycharmProjects/ASSD-TP2/tests/beethoven2.mid')
+beogram4000C.load('D:/PycharmProjects/ASSD-TP2/tests/rodriG.mid')
 beogram4000C.synthesize()
 beogram4000C.save_synthesis()

@@ -54,6 +54,7 @@ class Track:
                 octave = int(np.round(np.log2(noteFrequency/self.funNoteFreqs[fundamentalIndex])))
                 tickDuration, velocity = self.find_note_off(ev.note, ev.channel, index)
                 realDuration = tickDuration * spt_tempo * 1.5
+                if realDuration > 8: realDuration = 2
 
                 if self.instrumentName.find('sample') != -1:
                     noteAudio = self.instrument.play_note(noteFrequency=noteFrequency, duration=realDuration,
@@ -82,4 +83,4 @@ class Track:
                     self.usedNoteOff.append(currentIndex+1 + futureIndex)
                     return tickDelta, futureEv.velocity
 
-        return None, None
+        return tickDelta, 0
