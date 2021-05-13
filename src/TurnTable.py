@@ -31,6 +31,7 @@ class TurnTable:
         uspb_tempos = np.array(uspb_tempos).T
         spt_tempos = np.array([uspb_tempos[0], uspb_tempos[1] / (1e6 * self.midi_file.ticks_per_beat)])
         self.songLength = int(np.ceil(self.fs * self.midi_file.length))
+        self.song = np.zeros(self.songLength)
 
         for index, track in enumerate(self.midi_file.tracks[1:]):
             self.trackList.append(Track(midiLength=self.songLength, midiTrack=track, trackNumber=index + 1,
@@ -99,7 +100,9 @@ class TurnTable:
             if track.isActive:
                 if self.song.size < track.audioTrack.size:
                     self.song = np.append(self.song, np.zeros(track.audioTrack.size - self.song.size))
-                self.song[:track.audioTrack.size] += track.audioTrack
+                elif self.song.size > track.audioTrack.size:
+                    track.audioTrack = np.append(track.audioTrack, self.song.size - track.audioTrack.size)
+                self.song += track.audioTrack
         # if self.song.size < self.trackList[0].audioTrack.size:
         #     self.song = np.append(self.song, np.zeros(self.trackList[0].audioTrack.size - self.song.size))
         # self.song = self.trackList[0].audioTrack
