@@ -1,9 +1,9 @@
-from src.Instrument import Instrument
+# from src.Instrument import Instrument
 import numpy as np
 import scipy.signal as ss
 from scipy.interpolate import interp1d
 from scipy.fft import fft, ifft
-import soundfile as sf
+# import soundfile as sf
 
 
 def timeScaler(inputVector, winSize, hopSize, timeFactor):

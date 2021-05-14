@@ -3,12 +3,14 @@ import numpy as np
 from src.Instrument import Instrument
 import src.SampleSynth.sample_synth as ssynth
 import soundfile as sf
+import os
 
 
 class SampleViolin(Instrument):
     def __init__(self):
         super(SampleViolin, self).__init__()
-        self.samplesPath = 'D:/PycharmProjects/ASSD-TP2/src/SampleSynth/Violin/'
+        pathToSrc = os.getcwd().replace('\\', '/')
+        self.samplesPath = pathToSrc + '/SampleSynth/Violin/'
 
     def play_note(self, noteFrequency, duration, fs, **kwargs):
         noteNumber = kwargs['noteNumber']
@@ -47,7 +49,8 @@ class SampleViolin(Instrument):
 class SamplePiano(Instrument):
     def __init__(self):
         super(SamplePiano, self).__init__()
-        self.samplesPath = 'D:/PycharmProjects/ASSD-TP2/src/SampleSynth/Piano/'
+        pathToSrc = os.getcwd().replace('\\', '/')
+        self.samplesPath = pathToSrc + '/SampleSynth/Piano/'
         self.availableSamples = np.arange(27, 103, 3)
 
     def play_note(self, noteFrequency, duration, fs, **kwargs):
@@ -109,7 +112,8 @@ class SamplePiano(Instrument):
 class SampleGuitar(Instrument):
     def __init__(self):
         super(SampleGuitar, self).__init__()
-        self.samplesPath = 'D:/PycharmProjects/ASSD-TP2/src/SampleSynth/Sam/'
+        pathToSrc = os.getcwd().replace('\\', '/')
+        self.samplesPath = pathToSrc + '/SampleSynth/Sam/'
         self.availableSamples = np.arange(40, 77, 3)
 
     def play_note(self, noteFrequency, duration, fs, **kwargs):

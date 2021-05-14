@@ -1,14 +1,13 @@
 from mido import MidiFile
 import numpy as np
-# import pandas as pd
 from src.Track import Track
 from src.SamAsh import SamAsh
 import soundfile as sf
 import pyaudio
 import time
-from src.Effects.Eco_simple import eco_simple_FX
-from src.Effects.Reverb_LP import LP_Reverb_FX
-from src.Effects.Flanger import Flanger_FX
+# from src.Effects.Eco_simple import eco_simple_FX
+# from src.Effects.Reverb_LP import LP_Reverb_FX
+# from src.Effects.Flanger import Flanger_FX
 
 
 
@@ -143,6 +142,8 @@ class TurnTable:
         sf.write(masterPath + masterName + masterFormat, self.song, self.fs)
 
 
+# Test Bench
+
 beogram4000C = TurnTable()
 beogram4000C.load('D:/PycharmProjects/ASSD-TP2/tests/rodriG.mid')
 beogram4000C.synthesize()
@@ -154,4 +155,4 @@ beogram4000C.synthesize()
 # beogram4000C.stop_playback()
 
 # Mastering Test
-beogram4000C.master()
+# beogram4000C.master()

@@ -1,8 +1,8 @@
 import numpy as np
-from mido import MidiFile
+# from mido import MidiFile
 from src.SamAsh import SamAsh
-from src.Instrument import Instrument
-from src.SampleSynth import sample_synth
+# from src.Instrument import Instrument
+# from src.SampleSynth import sample_synth
 
 
 class Track:
