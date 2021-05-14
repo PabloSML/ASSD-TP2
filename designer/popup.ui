@@ -92,6 +92,16 @@
      </property>
     </widget>
    </item>
+   <item row="2" column="0" colspan="3">
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
    <item row="1" column="0">
     <widget class="QPushButton" name="violin_button">
      <property name="sizePolicy">
@@ -144,13 +154,20 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="0" colspan="3">
-    <widget class="QDialogButtonBox" name="buttonBox">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
+   <item row="1" column="2">
+    <widget class="QPushButton" name="guitar_button">
+     <property name="text">
+      <string/>
      </property>
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     <property name="icon">
+      <iconset>
+       <normaloff>../resources/designer/guitar.png</normaloff>../resources/designer/guitar.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>60</width>
+       <height>60</height>
+      </size>
      </property>
     </widget>
    </item>
@@ -165,8 +182,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>248</x>
-     <y>254</y>
+     <x>335</x>
+     <y>291</y>
     </hint>
     <hint type="destinationlabel">
      <x>157</x>
@@ -181,8 +198,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>316</x>
-     <y>260</y>
+     <x>403</x>
+     <y>291</y>
     </hint>
     <hint type="destinationlabel">
      <x>286</x>
