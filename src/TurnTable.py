@@ -111,10 +111,13 @@ class TurnTable:
             return (sound, pyaudio.paComplete)
 
 
-    def play_synthesis(self):
-        chunkSize = 1024
+    def start_playback(self):
+
+        if self.chunkIndex is None:
+            self.chunkIndex = 0
         # instancio PyAudio
-        p = pyaudio.PyAudio()
+        if self.paObj is None:
+            self.paObj = pyaudio.PyAudio()
         # abrimos player
         if self.player is None:
             self.player = self.paObj.open(rate=self.fs, channels=1, output=True, format=pyaudio.paFloat32, stream_callback=self.process_chunk)
