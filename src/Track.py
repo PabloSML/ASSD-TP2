@@ -16,6 +16,7 @@ class Track:
         self.spt_tempos = spt_tempos
         self.audioTrack = None
         self.isActive = True
+        self.volume = 1
         self.store = store
         self.instrument = None
         self.instrumentName = None
@@ -64,7 +65,6 @@ class Track:
                                                           fs=self.fs)
 
                 if np.count_nonzero(noteAudio) != 0:    # si la nota efectivamente se genero
-                    # noteAudio *= max(velocity, ev.velocity) / np.abs(noteAudio).max() * octave  # normaliza la velocidad
                     noteBeg = int(np.round(self.fs * realTime))
                     if noteBeg + noteAudio.size > self.audioTrack.size:
                         self.audioTrack = np.append(self.audioTrack, np.zeros(noteBeg + noteAudio.size - self.audioTrack.size))
