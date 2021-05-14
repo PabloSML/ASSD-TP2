@@ -18,3 +18,14 @@ class AppClass(QtWidgets.QWidget):
 
         self.ui =Ui_Form()
         self.ui.setupUi(self)
+
+
+        #Aca van las cosas que queres ocultar
+
+        # MY STUFF: cosas que necesito instanciar externas a Qt
+
+        # EVENT HANDLER: acciones a partir de la UI
+
+
+
+
