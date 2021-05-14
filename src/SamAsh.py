@@ -1,11 +1,12 @@
 from src.SampleSynth.SampleInstruments import SampleViolin, SampleGuitar, SamplePiano
 from src.KarplusStrong.ksInstruments import ksGuitar, ksDrum
-from src.AdditiveSynth import AdditiveSynthesizer
+from src.AdditiveSynth.AdditiveSynthesizer import AddSynth
 
 class SamAsh:
     def __init__(self):
         self.availableInstruments = {'sampleViolin': SampleViolin, 'sampleGuitar': SampleGuitar, 'samplePiano': SamplePiano,
-                                     'ksGuitar': ksGuitar, 'ksDrum': ksDrum}
+                                     'ksGuitar': ksGuitar, 'ksDrum': ksDrum,
+                                     'additiveSynth': AddSynth}
         self.usedInstruments = {}
 
     def loan_instrument(self, instrument_name):
