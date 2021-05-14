@@ -5,7 +5,11 @@ from src.Track import Track
 from src.SamAsh import SamAsh
 import soundfile as sf
 import pyaudio
-# import simpleaudio as sa
+import time
+from src.Effects.Eco_simple import eco_simple_FX
+from src.Effects.Reverb_LP import LP_Reverb_FX
+from src.Effects.Flanger import Flanger_FX
+
 
 
 class TurnTable:
@@ -17,6 +21,10 @@ class TurnTable:
         self.fs = 48000
         self.songLength = None
         self.song = None
+        self.chunkSize = 1024
+        self.chunkIndex = None
+        self.paObj = None
+        self.player = None
 
     def load(self, midi_path=None):
         self.midi_file = MidiFile(midi_path)
@@ -50,50 +58,100 @@ class TurnTable:
         for track in self.trackList:
             if track.isActive:
                 track.synthesize_track()
+        self.normalize_tracks()
         print('Synthesized all tracks')
 
-    # def chunks(self, lst, n):
-    #     """Yield successive n-sized chunks from lst."""
-    #     for i in range(0, len(lst), n):
-    #         yield lst[i:i + n]
+    '''
+    wf = wave.open(sys.argv[1], 'rb')
+    
+    # instantiate PyAudio (1)
+    p = pyaudio.PyAudio()
+    
+    # define callback (2)
+    def callback(in_data, frame_count, time_info, status):
+        data = wf.readframes(frame_count)
+        return (data, pyaudio.paContinue)
+    
+    # open stream using callback (3)
+    stream = p.open(format=p.get_format_from_width(wf.getsampwidth()),
+                    channels=wf.getnchannels(),
+                    rate=wf.getframerate(),
+                    output=True,
+                    stream_callback=callback)
+    
+    # start the stream (4)
+    stream.start_stream()
+    
+    # wait for stream to finish (5)
+    while stream.is_active():
+        time.sleep(0.1)
+    
+    # stop stream (6)
+    stream.stop_stream()
+    stream.close()
+    wf.close()
+    
+    # close PyAudio (7)
+    p.terminate()
+    '''
+
+    def process_chunk(self, in_data, frame_count, time_info, status):
+        playbackData = np.zeros(self.chunkSize).astype(np.float32)
+
+        for track in self.trackList:
+            chunkAudio = track.audioTrack[self.chunkIndex*self.chunkSize: (self.chunkIndex+1)*self.chunkSize]
+            playbackData[:chunkAudio.size] += chunkAudio
+
+        sound = self.prep_playback(playbackData)
+        self.chunkIndex += 1
+        if self.chunkIndex*self.chunkSize < self.song.size:
+            return (sound, pyaudio.paContinue)
+        else:
+            self.chunkIndex = None
+            return (sound, pyaudio.paComplete)
+
 
     def play_synthesis(self):
         chunkSize = 1024
         # instancio PyAudio
         p = pyaudio.PyAudio()
         # abrimos player
-        player = p.open(rate=self.fs, channels=1, output=True, format=pyaudio.paFloat32)
-        player.start_stream()
+        if self.player is None:
+            self.player = self.paObj.open(rate=self.fs, channels=1, output=True, format=pyaudio.paFloat32, stream_callback=self.process_chunk)
 
-        # arreglo para tener copia de los audios e ir "extrayendo chunks de c/u"
-        self.normalize_size()
-
-        chunkIndex = 0
+        if not self.player.is_active():
+            self.player.start_stream()
 
 
-        # while chunkIndex*chunkSize < self.song.size:
-        #
-        #     playbackData = np.zeros(chunkSize).astype(np.float32)
-        #
-        #     for track in self.trackList:
-        #         chunkAudio = track.audioTrack[chunkIndex*chunkSize: (chunkIndex+1)*chunkSize].astype(np.float32)
-        #         # applyFX(chunkAudio, track.FXConnections)
-        #         playbackData += chunkAudio
-        #
-        #     player.write(playbackData)
-        #     chunkIndex += 1
 
-        sound = (self.trackList[0].audioTrack / np.abs(self.trackList[0].audioTrack.max())).astype(np.float32)
-        sound = sound.tobytes()
-        player.write(sound)
 
-        player.stop_stream()
-        player.close()
-        p.terminate()
+    def pause_playback(self):
+        if self.player.is_active():
+            self.player.stop_stream()
 
-    def normalize_size(self):
+    def stop_playback(self):
+        if self.player is not None:
+            if self.player.is_active():
+                self.player.stop_stream()
+            self.player.close()
+            self.player = None
+        if self.paObj is not None:
+            self.paObj.terminate()
+            self.paObj = None
+        self.chunkIndex = None
+
+    def prep_playback(self, data):
+
+        maxAmp = np.abs(data).max()
+        if maxAmp > 1:
+            data = data / maxAmp
+
+        return (data.astype(np.float32)).tobytes()
+
+    def normalize_tracks(self):
         maxLenTrack = self.songLength
         for track in self.trackList:
+            track.audioTrack = track.audioTrack / (np.abs(track.audioTrack)).max()
             if maxLenTrack < track.audioTrack.size:
                 maxLenTrack += track.audioTrack.size - maxLenTrack
             elif maxLenTrack > track.audioTrack.size:
@@ -121,4 +179,7 @@ class TurnTable:
 beogram4000C = TurnTable()
 beogram4000C.load('D:/PycharmProjects/ASSD-TP2/tests/rodriG.mid')
 beogram4000C.synthesize()
-beogram4000C.play_synthesis()
+beogram4000C.start_playback()
+while beogram4000C.player.is_active():
+    time.sleep(0.1)
+beogram4000C.stop_playback()
