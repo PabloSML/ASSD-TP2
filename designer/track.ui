@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>486</width>
-    <height>150</height>
+    <width>432</width>
+    <height>126</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -43,7 +43,7 @@
         </property>
         <property name="icon">
          <iconset>
-          <normaloff>../resources/designer/piano.png</normaloff>../resources/designer/piano.png</iconset>
+          <normaloff>../resources/designer/nota.png</normaloff>../resources/designer/nota.png</iconset>
         </property>
         <property name="iconSize">
          <size>
@@ -55,6 +55,12 @@
       </item>
       <item>
        <widget class="QSlider" name="volume_slider">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="maximum">
          <number>100</number>
         </property>
