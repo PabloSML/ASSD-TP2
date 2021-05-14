@@ -1,4 +1,5 @@
 import numpy as np
+import scipy.io.wavfile as wf
 
 from src.Instrument import Instrument
 import src.SampleSynth.sample_synth as ssynth
@@ -155,6 +156,7 @@ class SampleGuitar(Instrument):
             # Si la nota está más cerca de la menor de sus adyacentes
             if noteToRight - noteNumber == 2:
                 sample, sample_fs = sf.read(self.samplesPath + prefix + str(noteToLeft) + '.wav')
+                # sample_fs, sample = wf.read(self.samplesPath + prefix + str(noteToLeft) + '.wav')
                 middleChannel = ssynth.averageChannels(sample)
                 note = ssynth.pitchShift(middleChannel, 1024, 256, 1)
 

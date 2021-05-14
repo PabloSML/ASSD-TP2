@@ -47,9 +47,8 @@ class TurnTable:
             if lastEv.type.find('note') != -1 or lastEv.type.find('control') != -1:  # Ver que la track sea de notas
                 self.trackList.append(Track(midiLength=self.songLength, midiTrack=track, trackNumber=index+1,
                                             spt_tempos=spt_tempos, store=self.store, fs=self.fs))
-                self.trackList[tracksCreated].set_instrument('sampleGuitar')
+                self.trackList[tracksCreated].set_instrument('ksGuitar')
                 tracksCreated += 1
-        # self.trackList[0].toggle_active()
 
 
     def set_fs(self, new_fs):
@@ -58,8 +57,8 @@ class TurnTable:
 
     def synthesize(self):
         for track in self.trackList:
-            if track.isActive:
-                track.synthesize_track()
+            # if track.isActive:
+            track.synthesize_track()
         self.normalize_tracks()
         print('Synthesized all tracks')
 
@@ -68,8 +67,9 @@ class TurnTable:
         playbackData = np.zeros(self.chunkSize).astype(np.float32)
 
         for track in self.trackList:
-            chunkAudio = track.audioTrack[self.chunkIndex*self.chunkSize: (self.chunkIndex+1)*self.chunkSize]
-            playbackData[:chunkAudio.size] += chunkAudio
+            if track.isActive:
+                chunkAudio = track.audioTrack[self.chunkIndex*self.chunkSize: (self.chunkIndex+1)*self.chunkSize] * track.volume
+                playbackData[:chunkAudio.size] += chunkAudio
 
         sound = self.prep_playback(playbackData)
         self.chunkIndex += 1
@@ -111,6 +111,9 @@ class TurnTable:
             self.paObj = None
         self.chunkIndex = None
 
+    # def skip_around(self, songPercentage):
+    #     if songPercentage >= 0 and songPercentage <= 1:
+    #         self.chunkIndex = int(np.floor((self.song.size / self.chunkSize) * songPercentage))
 
     def prep_playback(self, data):
 
@@ -134,25 +137,25 @@ class TurnTable:
             self.song = np.append(self.song, np.zeros(maxLenTrack - self.songLength))
 
 
-    def master(self, masterPath = 'D:/PycharmProjects/ASSD-TP2/tests/', masterName = 'Master', masterFormat = '.wav'):
+    def master(self, masterSaveInfo):
         for track in self.trackList:
             if track.isActive:
-                self.song += track.audioTrack
+                self.song += track.audioTrack * track.volume
 
-        sf.write(masterPath + masterName + masterFormat, self.song, self.fs)
+        sf.write(masterSaveInfo, self.song, self.fs)
 
 
-# Test Bench
-
-beogram4000C = TurnTable()
-beogram4000C.load('D:/PycharmProjects/ASSD-TP2/tests/rodriG.mid')
-beogram4000C.synthesize()
-
-# # Playback Test
+# # Test Bench
+#
+# beogram4000C = TurnTable()
+# beogram4000C.load('D:/PycharmProjects/ASSD-TP2/tests/rodriG.mid')
+# beogram4000C.synthesize()
+#
+# # # Playback Test
 # beogram4000C.start_playback()
 # while beogram4000C.player.is_active():
 #     time.sleep(0.1)
 # beogram4000C.stop_playback()
-
-# Mastering Test
-# beogram4000C.master()
+#
+# # Mastering Test
+# # beogram4000C.master()
