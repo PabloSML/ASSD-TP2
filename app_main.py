@@ -65,14 +65,16 @@ class AppClass(QtWidgets.QWidget):
     def load_MIDI(self):
         buf = ctypes.create_unicode_buffer(ctypes.wintypes.MAX_PATH)
         midiPath = QFileDialog.getOpenFileName(self, caption='Select MIDI File...', directory=buf.value, filter="MIDI Files (*.mid)")
-        self.beogram4000C.load(midiPath[0])
 
-        for index, track in enumerate(self.beogram4000C.trackList):
-            tempObject = track_item(self, index + 1, track)
-            tempItem = QtWidgets.QListWidgetItem()
-            tempItem.setSizeHint(tempObject.sizeHint())
-            self.ui.Tracklist.addItem(tempItem)
-            self.ui.Tracklist.setItemWidget(tempItem, tempObject)
+        if midiPath[0]:
+            self.beogram4000C.load(midiPath[0])
+
+            for index, track in enumerate(self.beogram4000C.trackList):
+                tempObject = track_item(self, index + 1, track)
+                tempItem = QtWidgets.QListWidgetItem()
+                tempItem.setSizeHint(tempObject.sizeHint())
+                self.ui.Tracklist.addItem(tempItem)
+                self.ui.Tracklist.setItemWidget(tempItem, tempObject)
 
     def synth(self):
         self.beogram4000C.synthesize()
@@ -98,7 +100,8 @@ class AppClass(QtWidgets.QWidget):
         buf = ctypes.create_unicode_buffer(ctypes.wintypes.MAX_PATH)
         masterPath = QFileDialog.getSaveFileName(self, caption='Save Audio File...', directory=buf.value,
                                                filter="WAV Files (*.wav);;FLAC Files (*.flac);;mp3 Files (*.mp3)")
-        self.beogram4000C.master(masterPath[0])
+        if masterPath[0]:
+            self.beogram4000C.master(masterPath[0])
 
     def play_note(self, funNoteFreq):
         octave = self.ui.spinBox.value()

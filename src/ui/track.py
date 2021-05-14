@@ -14,7 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_plotControlWrapper(object):
     def setupUi(self, plotControlWrapper):
         plotControlWrapper.setObjectName("plotControlWrapper")
-        plotControlWrapper.resize(486, 150)
+        plotControlWrapper.resize(432, 126)
         self.horizontalLayout = QtWidgets.QHBoxLayout(plotControlWrapper)
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.horizontalLayout_plot_wrap = QtWidgets.QWidget(plotControlWrapper)
@@ -37,12 +37,17 @@ class Ui_plotControlWrapper(object):
         self.instrument_button.setSizePolicy(sizePolicy)
         self.instrument_button.setText("")
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap("designer\\../resources/designer/piano.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap("designer\\../resources/designer/nota.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.instrument_button.setIcon(icon)
         self.instrument_button.setIconSize(QtCore.QSize(80, 80))
         self.instrument_button.setObjectName("instrument_button")
         self.horizontalLayout_plot.addWidget(self.instrument_button)
         self.volume_slider = QtWidgets.QSlider(self.horizontalLayout_plot_wrap)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.volume_slider.sizePolicy().hasHeightForWidth())
+        self.volume_slider.setSizePolicy(sizePolicy)
         self.volume_slider.setMaximum(100)
         self.volume_slider.setOrientation(QtCore.Qt.Horizontal)
         self.volume_slider.setObjectName("volume_slider")
@@ -67,7 +72,6 @@ class Ui_plotControlWrapper(object):
         plotControlWrapper.setWindowTitle(_translate("plotControlWrapper", "Form"))
         self.track_label.setText(_translate("plotControlWrapper", "TextLabel"))
         self.mute_button.setText(_translate("plotControlWrapper", "..."))
-
 
 
 if __name__ == "__main__":
