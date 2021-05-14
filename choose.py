@@ -2,7 +2,7 @@ from PyQt5.QtWidgets import QWidget, QDialog
 #from PyQt5.QtWidgets import QFrame, QMessageBox, QColorDialog
 from src.ui.track import Ui_plotControlWrapper
 from src.Track import Track
-from src.ui.popup import Ui_Dialog as pop_music
+from select_popup import instrument_selector
 
 class track_item(QWidget, Ui_plotControlWrapper):
 
@@ -30,6 +30,4 @@ class track_item(QWidget, Ui_plotControlWrapper):
         self.track.toggle_active()
 
     def open_popup(self):
-        selection = pop_music()
-        selection.setModal(True)
-        selection.exec_()
+        selection = instrument_selector()
