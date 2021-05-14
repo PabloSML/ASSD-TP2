@@ -1,14 +1,16 @@
 import sys
 import ctypes.wintypes
 from src.ui.mainwindow import Ui_Form
+from choose import  track_item
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QFileDialog
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas, \
     NavigationToolbar2QT as NavigationToolbar
 from matplotlib.figure import Figure
-# from src import UniFilter as UF
-# from src.lib import handy as hand
-# from src.lib.PlotControl import plotControl
+
+# Imports de backend
+from src.TurnTable import TurnTable
+from choose import track_item
 import numpy as np
 import scipy.signal as ss
 
@@ -29,6 +31,9 @@ class AppClass(QtWidgets.QWidget):
 
         # EVENT HANDLER: acciones a partir de la UI
         self.ui.load_button.clicked.connect(self.load_MIDI)
+        self.ui.Synth_button.clicked.connect(self.synth)
+        self.ui.play_button.clicked.connect(self.play_pause)
+        self.ui.stop_button.clicked.connect(self.stop_playback)
 
     def load_MIDI(self):
         buf = ctypes.create_unicode_buffer(ctypes.wintypes.MAX_PATH)
