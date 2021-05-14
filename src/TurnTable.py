@@ -26,6 +26,7 @@ class TurnTable:
         self.paObj = None
         self.player = None
 
+
     def load(self, midi_path=None):
         self.midi_file = MidiFile(midi_path)
         current_tick = 0
@@ -51,8 +52,10 @@ class TurnTable:
                 tracksCreated += 1
         # self.trackList[0].toggle_active()
 
+
     def set_fs(self, new_fs):
         self.fs = new_fs
+
 
     def synthesize(self):
         for track in self.trackList:
@@ -61,39 +64,6 @@ class TurnTable:
         self.normalize_tracks()
         print('Synthesized all tracks')
 
-    '''
-    wf = wave.open(sys.argv[1], 'rb')
-    
-    # instantiate PyAudio (1)
-    p = pyaudio.PyAudio()
-    
-    # define callback (2)
-    def callback(in_data, frame_count, time_info, status):
-        data = wf.readframes(frame_count)
-        return (data, pyaudio.paContinue)
-    
-    # open stream using callback (3)
-    stream = p.open(format=p.get_format_from_width(wf.getsampwidth()),
-                    channels=wf.getnchannels(),
-                    rate=wf.getframerate(),
-                    output=True,
-                    stream_callback=callback)
-    
-    # start the stream (4)
-    stream.start_stream()
-    
-    # wait for stream to finish (5)
-    while stream.is_active():
-        time.sleep(0.1)
-    
-    # stop stream (6)
-    stream.stop_stream()
-    stream.close()
-    wf.close()
-    
-    # close PyAudio (7)
-    p.terminate()
-    '''
 
     def process_chunk(self, in_data, frame_count, time_info, status):
         playbackData = np.zeros(self.chunkSize).astype(np.float32)
@@ -126,11 +96,10 @@ class TurnTable:
             self.player.start_stream()
 
 
-
-
     def pause_playback(self):
         if self.player.is_active():
             self.player.stop_stream()
+
 
     def stop_playback(self):
         if self.player is not None:
@@ -143,6 +112,7 @@ class TurnTable:
             self.paObj = None
         self.chunkIndex = None
 
+
     def prep_playback(self, data):
 
         maxAmp = np.abs(data).max()
@@ -150,6 +120,7 @@ class TurnTable:
             data = data / maxAmp
 
         return (data.astype(np.float32)).tobytes()
+
 
     def normalize_tracks(self):
         maxLenTrack = self.songLength
@@ -164,25 +135,23 @@ class TurnTable:
             self.song = np.append(self.song, np.zeros(maxLenTrack - self.songLength))
 
 
-    def save_synthesis(self):
-        self.song = np.zeros(self.songLength)
+    def master(self, masterPath = 'D:/PycharmProjects/ASSD-TP2/tests/', masterName = 'Master', masterFormat = '.wav'):
         for track in self.trackList:
             if track.isActive:
-                if self.song.size < track.audioTrack.size:
-                    self.song = np.append(self.song, np.zeros(track.audioTrack.size - self.song.size))
-                elif self.song.size > track.audioTrack.size:
-                    track.audioTrack = np.append(track.audioTrack, self.song.size - track.audioTrack.size)
                 self.song += track.audioTrack
-        # if self.song.size < self.trackList[0].audioTrack.size:
-        #     self.song = np.append(self.song, np.zeros(self.trackList[0].audioTrack.size - self.song.size))
-        # self.song = self.trackList[0].audioTrack
-        sf.write('D:/PycharmProjects/ASSD-TP2/tests/test.wav', self.song, self.fs)
+
+        sf.write(masterPath + masterName + masterFormat, self.song, self.fs)
 
 
 beogram4000C = TurnTable()
 beogram4000C.load('D:/PycharmProjects/ASSD-TP2/tests/rodriG.mid')
 beogram4000C.synthesize()
-beogram4000C.start_playback()
-while beogram4000C.player.is_active():
-    time.sleep(0.1)
-beogram4000C.stop_playback()
+
+# # Playback Test
+# beogram4000C.start_playback()
+# while beogram4000C.player.is_active():
+#     time.sleep(0.1)
+# beogram4000C.stop_playback()
+
+# Mastering Test
+beogram4000C.master()
