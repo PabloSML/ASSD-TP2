@@ -64,7 +64,8 @@ class AppClass(QtWidgets.QWidget):
         self.beogram4000C.pause_playback()
 
     def stop_playback(self):
-        self.ui.play_button.checkStateSet(False)
+        if self.ui.play_button.isChecked():
+            self.ui.play_button.toggle()
         self.beogram4000C.stop_playback()
 
     def master(self):
