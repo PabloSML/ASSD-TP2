@@ -9,7 +9,7 @@ import matplotlib.ticker as ticker
 # ------------------------------------------------------------
 if __name__ == '__main__':
 
-    instrumento = 'trumpet'
+    instrumento = 'piano'
 
     original, rate = sf.read('../../resources/Samples/' + instrumento + '-C4.wav')
     t = np.linspace(0, original.shape[0] / rate, original.shape[0])  # start stop num

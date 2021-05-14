@@ -4,6 +4,7 @@ from src.ui.mainwindow import Ui_Form
 from choose import  track_item
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QFileDialog
+
 from src.AdditiveSynth.AdditiveSynthesizer import AddSynth
 # from src.KarplusStrong.ksInstruments import ksGuitar
 import pyaudio
@@ -17,7 +18,7 @@ from choose import track_item
 import numpy as np
 import scipy.signal as ss
 import time
-
+from select_popup import instrument_selector
 
 class AppClass(QtWidgets.QWidget):
 
@@ -26,6 +27,13 @@ class AppClass(QtWidgets.QWidget):
 
         self.ui =Ui_Form()
         self.ui.setupUi(self)
+        self.ui.AllWidget.setCurrentIndex(0)
+        #Aca van las cosas que queres ocultar
+
+        # MY STUFF: cosas que necesito instanciar externas a Qt
+
+        # EVENT HANDLER:
+
 
 
         #Aca van las cosas que queres ocultar
@@ -60,6 +68,7 @@ class AppClass(QtWidgets.QWidget):
         self.ui.A_button.clicked.connect(self.play_A)
         self.ui.Bb_button.clicked.connect(self.play_Bb)
         self.ui.B_button.clicked.connect(self.play_B)
+        self.ui.piano_select.clicked.connect(self.choose_instrument)
 
 
     def load_MIDI(self):
@@ -143,6 +152,25 @@ class AppClass(QtWidgets.QWidget):
             return (sound, pyaudio.paComplete)
 
 # Play Note Callbacks
+    def choose_instrument(self):
+        selection = instrument_selector()
+
+        if selection.exec_():
+
+            if selection.piano_button.isChecked():
+                self.note_instrument = 'piano'
+            elif selection.drums_button.isChecked():
+                self.note_instrument = 'drums'
+            elif selection.flute_button.isChecked():
+                self.note_instrument = 'flute'
+            elif selection.violin_button.isChecked():
+                self.note_instrument = 'violin'
+            elif selection.trumpet_button.isChecked():
+                self.note_instrument = 'trumpet'
+
+            icon = QtGui.QIcon()
+            icon.addPixmap(QtGui.QPixmap("resources/designer/" + self.note_instrument + ".png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+            self.ui.piano_select.setIcon(icon)
 
     def play_C(self):
         self.play_note(16.35)

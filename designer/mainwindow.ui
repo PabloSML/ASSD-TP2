@@ -37,14 +37,14 @@
            <item>
             <widget class="QPushButton" name="load_button">
              <property name="text">
-              <string>Slave</string>
+              <string>Abrir</string>
              </property>
             </widget>
            </item>
            <item>
             <widget class="QPushButton" name="save_button">
              <property name="text">
-              <string>Master</string>
+              <string>Guardar</string>
              </property>
             </widget>
            </item>
@@ -851,7 +851,7 @@
         <number>8</number>
        </property>
       </widget>
-      <widget class="QPushButton" name="pushButton_6">
+      <widget class="QPushButton" name="piano_select">
        <property name="geometry">
         <rect>
          <x>250</x>
@@ -891,7 +891,7 @@
       <zorder>A_button</zorder>
       <zorder>B_button</zorder>
       <zorder>spinBox</zorder>
-      <zorder>pushButton_6</zorder>
+      <zorder>piano_select</zorder>
       <zorder>Db_button</zorder>
       <zorder>Eb_button</zorder>
       <zorder>Gb_button</zorder>

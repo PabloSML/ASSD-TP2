@@ -1,4 +1,5 @@
 from PyQt5.QtWidgets import QWidget, QDialog
+from PyQt5 import QtGui
 #from PyQt5.QtWidgets import QFrame, QMessageBox, QColorDialog
 from src.ui.track import Ui_plotControlWrapper
 from src.Track import Track
@@ -30,4 +31,23 @@ class track_item(QWidget, Ui_plotControlWrapper):
         self.track.toggle_active()
 
     def open_popup(self):
+
         selection = instrument_selector()
+
+        if selection.exec_():
+
+            if selection.piano_button.isChecked():
+                self.instrument = 'piano'
+            elif selection.drums_button.isChecked():
+                self.instrument = 'drums'
+            elif selection.flute_button.isChecked():
+                self.instrument = 'flute'
+            elif selection.violin_button.isChecked():
+                self.instrument = 'violin'
+            elif selection.trumpet_button.isChecked():
+                self.instrument = 'trumpet'
+
+
+            icon = QtGui.QIcon()
+            icon.addPixmap(QtGui.QPixmap("resources/designer/" + self.instrument + ".png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+            self.instrument_button.setIcon(icon)

@@ -6,5 +6,9 @@ class instrument_selector(QDialog, Ui_Dialog):
 
     def __init__(self):
         super(instrument_selector, self).__init__()
-        self.setupUi()
+        self.setupUi(self)
+
+
+
+
 
