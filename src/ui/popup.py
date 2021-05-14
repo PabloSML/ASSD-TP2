@@ -98,6 +98,7 @@ class Ui_Dialog(object):
         icon5.addPixmap(QtGui.QPixmap("designer\\../resources/designer/guitar.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.guitar_button.setIcon(icon5)
         self.guitar_button.setIconSize(QtCore.QSize(60, 60))
+        self.guitar_button.setCheckable(True)
         self.guitar_button.setObjectName("guitar_button")
         self.gridLayout.addWidget(self.guitar_button, 1, 2, 1, 1)
 
