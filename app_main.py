@@ -34,6 +34,7 @@ class AppClass(QtWidgets.QWidget):
         self.ui.Synth_button.clicked.connect(self.synth)
         self.ui.play_button.clicked.connect(self.play_pause)
         self.ui.stop_button.clicked.connect(self.stop_playback)
+        self.ui.save_button.clicked.connect(self.master)
 
     def load_MIDI(self):
         buf = ctypes.create_unicode_buffer(ctypes.wintypes.MAX_PATH)
@@ -66,5 +67,8 @@ class AppClass(QtWidgets.QWidget):
         self.ui.play_button.checkStateSet(False)
         self.beogram4000C.stop_playback()
 
-    # def master(self):
-    #     self.beogram4000C.master()
+    def master(self):
+        buf = ctypes.create_unicode_buffer(ctypes.wintypes.MAX_PATH)
+        masterPath = QFileDialog.getSaveFileName(self, caption='Save Audio File...', directory=buf.value,
+                                               filter="WAV Files (*.wav);;FLAC Files (*.flac);;mp3 Files (*.mp3)")
+        self.beogram4000C.master(masterPath[0])

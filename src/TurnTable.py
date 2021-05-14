@@ -67,8 +67,9 @@ class TurnTable:
         playbackData = np.zeros(self.chunkSize).astype(np.float32)
 
         for track in self.trackList:
-            chunkAudio = track.audioTrack[self.chunkIndex*self.chunkSize: (self.chunkIndex+1)*self.chunkSize] * track.volume
-            playbackData[:chunkAudio.size] += chunkAudio
+            if track.isActive:
+                chunkAudio = track.audioTrack[self.chunkIndex*self.chunkSize: (self.chunkIndex+1)*self.chunkSize] * track.volume
+                playbackData[:chunkAudio.size] += chunkAudio
 
         sound = self.prep_playback(playbackData)
         self.chunkIndex += 1
@@ -110,6 +111,9 @@ class TurnTable:
             self.paObj = None
         self.chunkIndex = None
 
+    # def skip_around(self, songPercentage):
+    #     if songPercentage >= 0 and songPercentage <= 1:
+    #         self.chunkIndex = int(np.floor((self.song.size / self.chunkSize) * songPercentage))
 
     def prep_playback(self, data):
 
@@ -133,12 +137,12 @@ class TurnTable:
             self.song = np.append(self.song, np.zeros(maxLenTrack - self.songLength))
 
 
-    def master(self, masterPath = 'D:/PycharmProjects/ASSD-TP2/tests/', masterName = 'Master', masterFormat = '.wav'):
+    def master(self, masterSaveInfo):
         for track in self.trackList:
             if track.isActive:
                 self.song += track.audioTrack * track.volume
 
-        sf.write(masterPath + masterName + masterFormat, self.song, self.fs)
+        sf.write(masterSaveInfo, self.song, self.fs)
 
 
 # # Test Bench
