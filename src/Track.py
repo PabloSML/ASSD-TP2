@@ -27,6 +27,10 @@ class Track:
     def toggle_active(self):
         self.isActive = not self.isActive
 
+    def set_volume(self, newVolume):
+        if newVolume >= 0.0 and newVolume <= 1.0:
+            self.volume = newVolume
+
     def set_instrument(self, instrument_name):
         self.instrumentName = instrument_name
         self.instrument = self.store.loan_instrument(instrument_name)

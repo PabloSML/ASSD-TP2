@@ -42,13 +42,13 @@ class TurnTable:
         self.song = np.zeros(self.songLength)
 
         tracksCreated = 0
-        for index, track in enumerate(self.midi_file.tracks[1:]):
+        for index, track in enumerate(self.midi_file.tracks[1:2]):
             lastEv = track[-2]  # Sin contar End-Of-Track
             if lastEv.type.find('note') != -1 or lastEv.type.find('control') != -1:  # Ver que la track sea de notas
                 self.trackList.append(Track(midiLength=self.songLength, midiTrack=track, trackNumber=index+1,
                                             spt_tempos=spt_tempos, store=self.store, fs=self.fs))
+                self.trackList[tracksCreated].set_instrument('ksGuitar')
                 tracksCreated += 1
-                # self.trackList[index].set_instrument('sampleGuitar')
 
 
     def set_fs(self, new_fs):
@@ -141,17 +141,17 @@ class TurnTable:
         sf.write(masterPath + masterName + masterFormat, self.song, self.fs)
 
 
-# Test Bench
-
-beogram4000C = TurnTable()
-beogram4000C.load('D:/PycharmProjects/ASSD-TP2/tests/rodriG.mid')
-beogram4000C.synthesize()
-
-# # Playback Test
-beogram4000C.start_playback()
-while beogram4000C.player.is_active():
-    time.sleep(0.1)
-beogram4000C.stop_playback()
-
-# Mastering Test
-# beogram4000C.master()
+# # Test Bench
+#
+# beogram4000C = TurnTable()
+# beogram4000C.load('D:/PycharmProjects/ASSD-TP2/tests/rodriG.mid')
+# beogram4000C.synthesize()
+#
+# # # Playback Test
+# beogram4000C.start_playback()
+# while beogram4000C.player.is_active():
+#     time.sleep(0.1)
+# beogram4000C.stop_playback()
+#
+# # Mastering Test
+# # beogram4000C.master()

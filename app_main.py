@@ -46,3 +46,25 @@ class AppClass(QtWidgets.QWidget):
             tempItem.setSizeHint(tempObject.sizeHint())
             self.ui.Tracklist.addItem(tempItem)
             self.ui.Tracklist.setItemWidget(tempItem, tempObject)
+
+    def synth(self):
+        self.beogram4000C.synthesize()
+
+    def play_pause(self):
+        if self.ui.play_button.isChecked():
+            self.start_playback()
+        else:
+            self.pause_playback()
+
+    def start_playback(self):
+        self.beogram4000C.start_playback()
+
+    def pause_playback(self):
+        self.beogram4000C.pause_playback()
+
+    def stop_playback(self):
+        self.ui.play_button.checkStateSet(False)
+        self.beogram4000C.stop_playback()
+
+    # def master(self):
+    #     self.beogram4000C.master()
