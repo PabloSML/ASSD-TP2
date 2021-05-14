@@ -17,7 +17,8 @@ class AddSynth(Instrument):
         instrumento = kwargs['instrument']
         env = kwargs['env']
 
-        nota = ('C7' if freq > 650 else 'C4') if instrumento != 'guitar' else 'C4'
+        # nota = ('C6' if freq > 650 else 'C4') if instrumento != 'guitar' else 'C4'
+        nota = 'C4'
         data = self.instrument_data(instrumento + nota)
 
         self.create_partials(freq, data[0], data[1], duration, fs)

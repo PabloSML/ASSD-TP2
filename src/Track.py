@@ -64,6 +64,9 @@ class Track:
                 if self.instrumentName.find('sample') != -1:
                     noteAudio = self.instrument.play_note(noteFrequency=noteFrequency, duration=realDuration,
                                                           fs=self.fs, noteNumber=ev.note)
+                if self.instrumentName == 'additiveSynth':
+                    noteAudio = self.instrument.play_note(freq=noteFrequency, duration=realDuration,
+                                                          fs=self.fs, instrument='piano', env='ADSR')[1]
                 else:
                     noteAudio = self.instrument.play_note(noteFrequency=noteFrequency, duration=realDuration,
                                                           fs=self.fs)
