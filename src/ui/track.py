@@ -9,6 +9,7 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+import os
 
 
 class Ui_plotControlWrapper(object):
@@ -37,7 +38,9 @@ class Ui_plotControlWrapper(object):
         self.instrument_button.setSizePolicy(sizePolicy)
         self.instrument_button.setText("")
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap("resources/designer/nota.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        prePath = os.path.dirname(__file__).replace('\\', '/') + '/'
+        prePath = prePath.replace('/src/ui', '') + 'assets/'
+        icon.addPixmap(QtGui.QPixmap(prePath + "nota.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.instrument_button.setIcon(icon)
         self.instrument_button.setIconSize(QtCore.QSize(60, 60))
         self.instrument_button.setObjectName("instrument_button")
@@ -54,8 +57,8 @@ class Ui_plotControlWrapper(object):
         self.horizontalLayout_plot.addWidget(self.volume_slider)
         self.mute_button = QtWidgets.QToolButton(self.horizontalLayout_plot_wrap)
         icon1 = QtGui.QIcon()
-        icon1.addPixmap(QtGui.QPixmap("resources/designer/micro.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        icon1.addPixmap(QtGui.QPixmap("resources/designer/t.png"), QtGui.QIcon.Normal, QtGui.QIcon.On)
+        icon1.addPixmap(QtGui.QPixmap(prePath + "micro.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon1.addPixmap(QtGui.QPixmap(prePath + "t.png"), QtGui.QIcon.Normal, QtGui.QIcon.On)
         self.mute_button.setIcon(icon1)
         self.mute_button.setCheckable(True)
         self.mute_button.setToolButtonStyle(QtCore.Qt.ToolButtonIconOnly)

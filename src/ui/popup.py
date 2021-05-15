@@ -9,6 +9,7 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+import os
 
 
 class Ui_Dialog(object):
@@ -25,7 +26,9 @@ class Ui_Dialog(object):
         self.piano_button.setSizePolicy(sizePolicy)
         self.piano_button.setText("")
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap("designer\\../resources/designer/piano.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        prePath = os.path.dirname(__file__).replace('\\', '/') + '/'
+        prePath = prePath.replace('/src/ui', '') + 'assets/'
+        icon.addPixmap(QtGui.QPixmap(prePath + "piano.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.piano_button.setIcon(icon)
         self.piano_button.setIconSize(QtCore.QSize(60, 60))
         self.piano_button.setCheckable(True)
@@ -39,7 +42,7 @@ class Ui_Dialog(object):
         self.drums_button.setSizePolicy(sizePolicy)
         self.drums_button.setText("")
         icon1 = QtGui.QIcon()
-        icon1.addPixmap(QtGui.QPixmap("designer\\../resources/designer/drums.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon1.addPixmap(QtGui.QPixmap(prePath + "drums.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.drums_button.setIcon(icon1)
         self.drums_button.setIconSize(QtCore.QSize(60, 60))
         self.drums_button.setCheckable(True)
@@ -53,7 +56,7 @@ class Ui_Dialog(object):
         self.flute_button.setSizePolicy(sizePolicy)
         self.flute_button.setText("")
         icon2 = QtGui.QIcon()
-        icon2.addPixmap(QtGui.QPixmap("designer\\../resources/designer/flute.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon2.addPixmap(QtGui.QPixmap(prePath + "flute.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.flute_button.setIcon(icon2)
         self.flute_button.setIconSize(QtCore.QSize(60, 60))
         self.flute_button.setCheckable(True)
@@ -72,7 +75,7 @@ class Ui_Dialog(object):
         self.violin_button.setSizePolicy(sizePolicy)
         self.violin_button.setText("")
         icon3 = QtGui.QIcon()
-        icon3.addPixmap(QtGui.QPixmap("designer\\../resources/designer/violin.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon3.addPixmap(QtGui.QPixmap(prePath + "violin.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.violin_button.setIcon(icon3)
         self.violin_button.setIconSize(QtCore.QSize(60, 60))
         self.violin_button.setCheckable(True)
@@ -86,7 +89,7 @@ class Ui_Dialog(object):
         self.trumpet_button.setSizePolicy(sizePolicy)
         self.trumpet_button.setText("")
         icon4 = QtGui.QIcon()
-        icon4.addPixmap(QtGui.QPixmap("designer\\../resources/designer/trumpet.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon4.addPixmap(QtGui.QPixmap(prePath + "trumpet.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.trumpet_button.setIcon(icon4)
         self.trumpet_button.setIconSize(QtCore.QSize(60, 60))
         self.trumpet_button.setCheckable(True)
@@ -95,7 +98,7 @@ class Ui_Dialog(object):
         self.guitar_button = QtWidgets.QPushButton(Dialog)
         self.guitar_button.setText("")
         icon5 = QtGui.QIcon()
-        icon5.addPixmap(QtGui.QPixmap("designer\\../resources/designer/guitar.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon5.addPixmap(QtGui.QPixmap(prePath + "guitar.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.guitar_button.setIcon(icon5)
         self.guitar_button.setIconSize(QtCore.QSize(60, 60))
         self.guitar_button.setCheckable(True)

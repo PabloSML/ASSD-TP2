@@ -5,10 +5,12 @@ from src.SamAsh import SamAsh
 import soundfile as sf
 import pyaudio
 import time
+import os
+
+# Funciones de efectos (no implementadas)
 # from src.Effects.Eco_simple import eco_simple_FX
 # from src.Effects.Reverb_LP import LP_Reverb_FX
 # from src.Effects.Flanger import Flanger_FX
-
 
 
 class TurnTable:
@@ -26,7 +28,7 @@ class TurnTable:
         self.player = None
 
 
-    def load(self, midi_path=None):
+    def load(self, midi_path=None, debugSampleSynth=False):
         self.midi_file = MidiFile(midi_path)
         current_tick = 0
         uspb_tempos = []  # uspb = micro-sec per beat
@@ -47,7 +49,8 @@ class TurnTable:
             if lastEv.type.find('note') != -1 or lastEv.type.find('control') != -1:  # Ver que la track sea de notas
                 self.trackList.append(Track(midiLength=self.songLength, midiTrack=track, trackNumber=index+1,
                                             spt_tempos=spt_tempos, store=self.store, fs=self.fs))
-                self.trackList[tracksCreated].set_instrument('additiveSynth')
+                if debugSampleSynth:
+                    self.trackList[tracksCreated].set_instrument('sampleGuitar')
                 tracksCreated += 1
 
 
@@ -145,17 +148,20 @@ class TurnTable:
         sf.write(masterSaveInfo, self.song, self.fs)
 
 
-# # # # Test Bench
-# # #
-# beogram4000C = TurnTable()
-# beogram4000C.load('D:/PycharmProjects/ASSD-TP2/tests/Beethoven.mid')
-# beogram4000C.synthesize()
-# # #
-# # # # # Playback Test
-# # # beogram4000C.start_playback()
-# # # while beogram4000C.player.is_active():
-# # #     time.sleep(0.1)
-# # # beogram4000C.stop_playback()
-# # #
-# # # # Mastering Test
-# beogram4000C.master('D:/PycharmProjects/ASSD-TP2/tests/Beethoven.wav')
+
+# Test Bench
+if __name__ == '__main__':
+    beogram4000C = TurnTable()
+    pathToSrc = os.getcwd().replace('\\', '/')
+    midiPath = pathToSrc + '/SampleSynth/TestBench/rodriG.mid'
+    beogram4000C.load(midiPath, debugSampleSynth=True)
+    beogram4000C.synthesize()
+
+    # # Playback Test
+    # beogram4000C.start_playback()
+    # while beogram4000C.player.is_active():
+    #     time.sleep(0.1)
+    # beogram4000C.stop_playback()
+
+    # Mastering Test
+    beogram4000C.master(pathToSrc + '/SampleSynth/TestBench/rodriGuitar.wav')

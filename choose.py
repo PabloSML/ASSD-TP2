@@ -4,6 +4,7 @@ from PyQt5 import QtGui
 from src.ui.track import Ui_plotControlWrapper
 from src.Track import Track
 from select_popup import instrument_selector
+import os
 
 class track_item(QWidget, Ui_plotControlWrapper):
 
@@ -38,16 +39,25 @@ class track_item(QWidget, Ui_plotControlWrapper):
 
             if selection.piano_button.isChecked():
                 self.instrument = 'piano'
+                self.track.set_instrument('piano', additive=True)
             elif selection.drums_button.isChecked():
                 self.instrument = 'drums'
+                self.track.set_instrument('ksDrum')
             elif selection.flute_button.isChecked():
                 self.instrument = 'flute'
+                self.track.set_instrument('flute', additive=True)
             elif selection.violin_button.isChecked():
                 self.instrument = 'violin'
+                self.track.set_instrument('violin', additive=True)
             elif selection.trumpet_button.isChecked():
                 self.instrument = 'trumpet'
+                self.track.set_instrument('trumpet', additive=True)
+            elif selection.guitar_button.isChecked():
+                self.instrument = 'guitar'
+                self.track.set_instrument('ksGuitar')
 
 
             icon = QtGui.QIcon()
-            icon.addPixmap(QtGui.QPixmap("resources/designer/" + self.instrument + ".png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+            prePath = os.path.dirname(__file__).replace('\\', '/') + '/'
+            icon.addPixmap(QtGui.QPixmap(prePath + "assets/" + self.instrument + ".png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
             self.instrument_button.setIcon(icon)

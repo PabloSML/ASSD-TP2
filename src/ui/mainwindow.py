@@ -9,6 +9,7 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+import os
 
 
 class Ui_Form(object):
@@ -68,8 +69,10 @@ class Ui_Form(object):
         self.play_button.setSizePolicy(sizePolicy)
         self.play_button.setText("")
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap("resources/designer/play.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        icon.addPixmap(QtGui.QPixmap("resources/designer/pause.png"), QtGui.QIcon.Normal, QtGui.QIcon.On)
+        prePath = os.path.dirname(__file__).replace('\\', '/') + '/'
+        prePath = prePath.replace('/src/ui', '') + 'assets/'
+        icon.addPixmap(QtGui.QPixmap(prePath + "play.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap(prePath + "pause.png"), QtGui.QIcon.Normal, QtGui.QIcon.On)
         self.play_button.setIcon(icon)
         self.play_button.setCheckable(True)
         self.play_button.setObjectName("play_button")
@@ -82,7 +85,7 @@ class Ui_Form(object):
         self.stop_button.setSizePolicy(sizePolicy)
         self.stop_button.setText("")
         icon1 = QtGui.QIcon()
-        icon1.addPixmap(QtGui.QPixmap("resources/designer/stop.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon1.addPixmap(QtGui.QPixmap(prePath + "stop.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.stop_button.setIcon(icon1)
         self.stop_button.setObjectName("stop_button")
         self.horizontalLayout_5.addWidget(self.stop_button)
@@ -489,7 +492,7 @@ class Ui_Form(object):
         self.piano_select.setStyleSheet("")
         self.piano_select.setText("")
         icon2 = QtGui.QIcon()
-        icon2.addPixmap(QtGui.QPixmap("resources/designer/piano.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon2.addPixmap(QtGui.QPixmap(prePath + "piano.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.piano_select.setIcon(icon2)
         self.piano_select.setIconSize(QtCore.QSize(80, 80))
         self.piano_select.setObjectName("piano_select")

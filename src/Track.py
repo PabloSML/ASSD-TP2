@@ -20,6 +20,7 @@ class Track:
         self.store = store
         self.instrument = None
         self.instrumentName = None
+        self.additiveInst = None
         self.funNoteFreqs = [16.35, 17.32, 18.35, 19.0, 20.6, 21.83, 23.12, 24.5, 25.96, 27.5, 29.0, 30.87]
         # self.funNoteFreqs = {'A': 27.5, 'A#': 29.0, 'B': 30.87, 'C': 16.35, 'C#': 17.32, 'D': 18.35,
         #                      'D#': 19.0, 'E': 20.6, 'F': 21.83, 'F#': 23.12, 'G': 24.5, 'G#': 25.96}
@@ -31,9 +32,14 @@ class Track:
         if newVolume >= 0.0 and newVolume <= 1.0:
             self.volume = newVolume
 
-    def set_instrument(self, instrument_name):
-        self.instrumentName = instrument_name
-        self.instrument = self.store.loan_instrument(instrument_name)
+    def set_instrument(self, instrument_name, additive=False):
+        if additive:
+            self.instrumentName = 'additiveSynth'
+            self.additiveInst = instrument_name
+        else:
+            self.instrumentName = instrument_name
+            self.additiveInst = None
+        self.instrument = self.store.loan_instrument(self.instrumentName)
 
     def current_spt_tempo(self, current_tick):
         return self.spt_tempos[1][self.spt_tempos[0].searchsorted(current_tick) - 1]
@@ -64,9 +70,9 @@ class Track:
                 if self.instrumentName.find('sample') != -1:
                     noteAudio = self.instrument.play_note(noteFrequency=noteFrequency, duration=realDuration,
                                                           fs=self.fs, noteNumber=ev.note)
-                if self.instrumentName == 'additiveSynth':
+                elif self.additiveInst is not None:
                     noteAudio = self.instrument.play_note(freq=noteFrequency, duration=realDuration,
-                                                          fs=self.fs, instrument='piano', env='ADSR')[1]
+                                                          fs=self.fs, instrument=self.additiveInst, env='ADSR')[1]
                 else:
                     noteAudio = self.instrument.play_note(noteFrequency=noteFrequency, duration=realDuration,
                                                           fs=self.fs)

@@ -1,9 +1,9 @@
-import sys
+import os
 import ctypes.wintypes
 from src.ui.mainwindow import Ui_Form
 from choose import  track_item
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QFileDialog
+from PyQt5.QtWidgets import QFileDialog, QMessageBox
 
 from src.AdditiveSynth.AdditiveSynthesizer import AddSynth
 # from src.KarplusStrong.ksInstruments import ksGuitar
@@ -16,7 +16,6 @@ from matplotlib.figure import Figure
 from src.TurnTable import TurnTable
 from choose import track_item
 import numpy as np
-import scipy.signal as ss
 import time
 from select_popup import instrument_selector
 
@@ -27,7 +26,16 @@ class AppClass(QtWidgets.QWidget):
 
         self.ui =Ui_Form()
         self.ui.setupUi(self)
+        self.setWindowTitle("JacoBeats")
         self.ui.AllWidget.setCurrentIndex(0)
+
+        # Icono
+        myappid = 'jacobeats'  # arbitrary string
+        ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
+        app_icon = QtGui.QIcon()
+        app_icon.addFile(os.path.dirname(__file__) + '/assets/keys.ico', QtCore.QSize(128, 128))
+        self.setWindowIcon(app_icon)
+
         #Aca van las cosas que queres ocultar
 
         # MY STUFF: cosas que necesito instanciar externas a Qt
@@ -42,12 +50,11 @@ class AppClass(QtWidgets.QWidget):
         self.beogram4000C = TurnTable()
         self.piano = AddSynth()
         self.pianoNote = np.array([])
-        # self.funNoteFreqs = {'A': 27.5, 'A#': 29.0, 'B': 30.87, 'C': 16.35, 'C#': 17.32, 'D': 18.35,
-        #                      'D#': 19.0, 'E': 20.6, 'F': 21.83, 'F#': 23.12, 'G': 24.5, 'G#': 25.96}
         self.paObj = None
         self.player = None
         self.chunkSize = 1024
         self.chunkIndex = None
+        self.playReady = False
 
         # EVENT HANDLER: acciones a partir de la UI
         self.ui.load_button.clicked.connect(self.load_MIDI)
@@ -86,13 +93,22 @@ class AppClass(QtWidgets.QWidget):
                 self.ui.Tracklist.setItemWidget(tempItem, tempObject)
 
     def synth(self):
+        msg = QMessageBox()
+        msg.setWindowTitle('Beginning Synthesis...')
+        msg.setText('The MIDI will begin synthesis when you press OK. Please be patient and tap your foot to some jams for better results')
+        msgPopup = msg.exec_()
         self.beogram4000C.synthesize()
+        self.playReady = True
+        msg.setWindowTitle('Synthesis Complete')
+        msg.setText('It\'s time to enjoy the grooves!')
+        msgPopup = msg.exec_()
 
     def play_pause(self):
-        if self.ui.play_button.isChecked():
-            self.start_playback()
-        else:
-            self.pause_playback()
+        if self.playReady:
+            if self.ui.play_button.isChecked():
+                self.start_playback()
+            else:
+                self.pause_playback()
 
     def start_playback(self):
         self.beogram4000C.start_playback()
@@ -101,16 +117,18 @@ class AppClass(QtWidgets.QWidget):
         self.beogram4000C.pause_playback()
 
     def stop_playback(self):
-        if self.ui.play_button.isChecked():
-            self.ui.play_button.toggle()
-        self.beogram4000C.stop_playback()
+        if self.playReady:
+            if self.ui.play_button.isChecked():
+                self.ui.play_button.toggle()
+            self.beogram4000C.stop_playback()
 
     def master(self):
-        buf = ctypes.create_unicode_buffer(ctypes.wintypes.MAX_PATH)
-        masterPath = QFileDialog.getSaveFileName(self, caption='Save Audio File...', directory=buf.value,
-                                               filter="WAV Files (*.wav);;FLAC Files (*.flac);;mp3 Files (*.mp3)")
-        if masterPath[0]:
-            self.beogram4000C.master(masterPath[0])
+        if self.playReady:
+            buf = ctypes.create_unicode_buffer(ctypes.wintypes.MAX_PATH)
+            masterPath = QFileDialog.getSaveFileName(self, caption='Save Audio File...', directory=buf.value,
+                                                   filter="WAV Files (*.wav);;FLAC Files (*.flac);;AIFF Files (*.aiff)")
+            if masterPath[0]:
+                self.beogram4000C.master(masterPath[0])
 
     def play_note(self, funNoteFreq):
         octave = self.ui.spinBox.value()
@@ -129,7 +147,7 @@ class AppClass(QtWidgets.QWidget):
             self.player.start_stream()
 
         while self.player.is_active():
-            time.sleep(0.1)
+            time.sleep(0.01)
 
         self.player.stop_stream()
         self.player.close()
@@ -169,8 +187,11 @@ class AppClass(QtWidgets.QWidget):
                 self.note_instrument = 'trumpet'
 
             icon = QtGui.QIcon()
-            icon.addPixmap(QtGui.QPixmap("resources/designer/" + self.note_instrument + ".png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+            prePath = os.path.dirname(__file__).replace('\\', '/') + '/'
+            icon.addPixmap(QtGui.QPixmap(prePath + 'assets/' + self.note_instrument + ".png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
             self.ui.piano_select.setIcon(icon)
+
+
 
     def play_C(self):
         self.play_note(16.35)

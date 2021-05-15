@@ -51,10 +51,10 @@ class AddSynth(Instrument):
     def apply_ADSR(self, dti, dtA, dtD, dtS, dtR, dtf, kAo, Ao, So, fs):
 
         inicio = np.zeros(int(dti * fs))
-        stageA = np.arange(0, dtA, 1 / fs) * kAo / dtA
-        stageD = np.arange(0, dtD, 1 / fs) * ((Ao - kAo) / dtD) + kAo
-        stageS = np.arange(0, dtS, 1 / fs) * ((So - Ao) / dtS) + Ao
-        stageR = np.arange(0, dtR, 1 / fs) * (-So / dtR) + So
+        stageA = np.arange(0, dtA, 1 / fs) * kAo / dtA if dtA != 0 else np.zeros([])
+        stageD = np.arange(0, dtD, 1 / fs) * ((Ao - kAo) / dtD) + kAo if dtD != 0 else np.zeros([])
+        stageS = np.arange(0, dtS, 1 / fs) * ((So - Ao) / dtS) + Ao if dtS != 0 else np.zeros([])
+        stageR = np.arange(0, dtR, 1 / fs) * (-So / dtR) + So if dtR != 0 else np.zeros([])
         final = np.zeros(int(dtf * fs))
 
         ADSR = np.concatenate([inicio, stageA, stageD, stageS, stageR, final], axis=None)
